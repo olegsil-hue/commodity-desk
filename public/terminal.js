@@ -18,6 +18,8 @@ const els = {
   trades: document.querySelector("#trades"),
   sandboxJournal: document.querySelector("#sandbox-journal"),
   sandboxResult: document.querySelector("#sandbox-result"),
+  dayPlan: document.querySelector("#day-plan"),
+  positionPlan: document.querySelector("#position-plan"),
   sandboxMeta: document.querySelector("#sandbox-meta"),
   sandboxDecision: document.querySelector("#sandbox-decision"),
   sandboxLines: document.querySelector("#sandbox-lines"),
@@ -203,7 +205,7 @@ function renderBroker(info) {
   document.querySelector("#sandbox-pay").disabled = false;
   const parts = [];
   if (info?.sandbox?.connected) parts.push(`Песочница …${info.sandbox.tail}, на биржу не идёт`);
-  if (info?.live?.connected) parts.push(`Боевой счёт …${info.live.tail}. Заявки идут на него, лимит 40 000 ₽`);
+  if (info?.live?.connected) parts.push(`Боевой счёт …${info.live.tail}. Лимит — свободные рубли на счёте`);
   if (!info?.connected && !parts.length) {
     els.banner.textContent = "Токен не сохранён. Вставьте его в поле слева, не в чат.";
     return;
@@ -246,7 +248,7 @@ async function bootDesk() {
   const broker = await response.json();
   const live = broker.live;
   els.meta.textContent = live?.connected
-    ? `Боевой счёт …${live.tail}. Лимит 40 000 ₽.`
+    ? `Боевой счёт …${live.tail}. Лимит — свободные рубли на счёте.`
     : "Боевой счёт не подключён.";
   await refreshSandbox();
 }
@@ -256,24 +258,22 @@ function cloudScreen() {
 }
 
 async function boot() {
-  if (cloudScreen()) {
-    document.querySelector(".toolbar").hidden = true;
-    showDesk(true);
-    els.meta.textContent = "Облачный экран. Компьютер может быть выключен.";
-    await refreshSandbox();
-    return;
-  }
+  const cloud = cloudScreen();
+  if (cloud) document.querySelector(".toolbar .check").hidden = true;
   const response = await fetch("/api/session");
   const session = await response.json();
   needsSetup = session.needsSetup;
-  els.gateTitle.textContent = needsSetup ? "Задайте пароль админа" : "Вход админа";
-  els.gateHint.textContent = needsSetup
-    ? "Первый запуск. Пароль останется на этом компьютере, в чат его писать не нужно."
-    : "Стол на этом компьютере. Пароль хранится только локально.";
+  els.gateTitle.textContent = needsSetup ? "Задайте пароль админа" : "Вход";
+  els.gateHint.textContent = cloud
+    ? "Тот же пароль, что у стола на компьютере."
+    : needsSetup
+      ? "Первый запуск. Пароль останется на этом компьютере, в чат его писать не нужно."
+      : "Стол на этом компьютере. Пароль хранится только локально.";
   document.querySelector("#password").autocomplete = needsSetup ? "new-password" : "current-password";
-  if (session.admin) {
+    if (session.admin) {
     showDesk(true);
     await bootDesk();
+    await refreshChat();
     return;
   }
   showDesk(false);
@@ -303,7 +303,7 @@ document.querySelector("#gate-form").addEventListener("submit", async (event) =>
     if (!response.ok) {
       const session = await fetch("/api/session").then((item) => item.json());
       needsSetup = session.needsSetup;
-      els.gateTitle.textContent = needsSetup ? "Задайте пароль админа" : "Вход админа";
+      els.gateTitle.textContent = needsSetup ? "Задайте пароль админа" : "Вход";
       els.gateStatus.textContent = needsSetup
         ? "Этот пароль не сохранился. Введите его ещё раз."
         : "Пароль не подошёл. Введите его ещё раз.";
@@ -313,6 +313,7 @@ document.querySelector("#gate-form").addEventListener("submit", async (event) =>
     showDesk(true);
     els.meta.textContent = "Вход выполнен. Считаю боевой счёт.";
     await bootDesk();
+    await refreshChat();
   } catch (err) {
     els.gateStatus.textContent = "Сервер не ответил. Обновите страницу и повторите.";
   } finally {
@@ -341,8 +342,13 @@ function renderSandbox(box) {
   const yieldText = `${yieldPct >= 0 ? "+" : ""}${(yieldPct * 100).toFixed(2).replace(".", ",")}%`;
   els.sandboxResult.textContent = `${pnl >= 0 ? "+" : ""}${money.format(pnl)} ₽ (${yieldText})`;
   els.sandboxResult.className = `result ${pnl >= 0 ? "up" : "down"}`;
-  const updated = box.updatedAt ? ` Обновлено ${box.updatedAt.slice(11, 16)} UTC.` : "";
-  els.sandboxMeta.textContent = `Внесено ${money.format(box.deposited)} ₽. Свободно ${money.format(box.cash)} ₽. Акции ${money.format(box.stockValue || 0)} ₽. Нефть с закрытыми кругами ${money.format(box.futuresPnl || 0)} ₽.${updated}`;
+  const updated = box.updatedAt ? ` Обновлено ${mskClock(box.updatedAt).slice(0, 5)} мск.` : "";
+  const oilText = box.futuresSettled
+    ? `Нефть ${money.format(box.futuresPnl || 0)} ₽ уже внутри свободных денег.`
+    : `Нефть ${money.format(box.futuresPnl || 0)} ₽.`;
+  els.sandboxMeta.textContent = `Внесено ${money.format(box.deposited)} ₽. Свободно ${money.format(box.available || box.cash)} ₽. Акции ${money.format(box.stockValue || 0)} ₽. ${oilText}${updated}`;
+  if (els.dayPlan) els.dayPlan.textContent = box.plan?.day || "";
+  if (els.positionPlan) els.positionPlan.textContent = (box.plan?.positions || []).join("\n");
   els.sandboxDecision.textContent = [box.priceNote, box.lastDecision].filter(Boolean).join(" ");
   els.sandboxLines.innerHTML = box.lines?.length
     ? box.lines
@@ -362,6 +368,12 @@ function renderSandbox(box) {
   renderLogic(box.logic);
 }
 
+function mskClock(iso) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Date(date.getTime() + 3 * 60 * 60 * 1000).toISOString().slice(11, 19);
+}
+
 function tradeIncome(list) {
   const open = {};
   const marked = [];
@@ -375,13 +387,13 @@ function tradeIncome(list) {
       if (book.length && book[0].side === "sell") {
         marked.push(closeAgainst(row, book, perLot, lots));
       } else {
-        book.push({ side: "buy", left: lots, perLot });
+        book.push({ side: "buy", left: lots, perLot, price: Number(row.price), reason: row.reason || "" });
         marked.push({ ...row, tradePnl: null });
       }
     } else if (book.length && book[0].side !== "sell") {
       marked.push(closeAgainst(row, book, perLot, lots));
     } else {
-      book.push({ side: "sell", left: lots, perLot });
+      book.push({ side: "sell", left: lots, perLot, price: Number(row.price), reason: row.reason || "" });
       marked.push({ ...row, tradePnl: null });
     }
   }
@@ -391,16 +403,59 @@ function tradeIncome(list) {
 function closeAgainst(row, book, perLot, lots) {
   let left = lots;
   let pnl = 0;
+  let entryNotional = 0;
+  let entryQty = 0;
+  let entryPx = 0;
+  let entryReason = "";
   while (left > 0 && book.length) {
     const lot = book[0];
     const take = Math.min(left, lot.left);
     const sign = row.side === "sell" ? 1 : -1;
     pnl += sign * (perLot - lot.perLot) * take;
+    entryNotional += lot.perLot * take;
+    entryPx += (lot.price || 0) * take;
+    entryQty += take;
+    if (!entryReason && lot.reason) entryReason = lot.reason;
     lot.left -= take;
     left -= take;
     if (lot.left <= 0) book.shift();
   }
-  return { ...row, tradePnl: pnl };
+  return {
+    ...row,
+    tradePnl: pnl,
+    entryNotional,
+    entryPrice: entryQty ? entryPx / entryQty : null,
+    entryReason,
+  };
+}
+
+function shownReason(row) {
+  const vague = /отскок или цель|у брокера|журнале стола/.test(row.reason || "");
+  if (row.tradePnl == null || !vague) return row.reason || "";
+  const pnl = row.tradePnl;
+  const entry = row.entryPrice;
+  const exit = Number(row.price);
+  const pct = row.entryNotional ? (pnl / row.entryNotional) * 100 : null;
+  const pctText = pct == null ? "" : `около ${pct >= 0 ? "+" : ""}${pct.toFixed(1).replace(".", ",")}% от денег входа`;
+  const head = entry
+    ? `Вход ${priceFmt.format(entry)}, ${row.side === "sell" ? "продажа" : "выкуп"} ${priceFmt.format(exit)}, ${pnl >= 0 ? "+" : ""}${money.format(pnl)} ₽`
+    : `${pnl >= 0 ? "+" : ""}${money.format(pnl)} ₽`;
+  const fromBroker = row.brokerOp || /брокера|журнале стола/.test(row.reason || "");
+  let rule;
+  if (fromBroker && pct != null && pct < 1 && pnl > 0) {
+    rule = "До цели +1% это не дотягивает. Продажа прошла у брокера, стол в журнал её не записал — теперь строка на месте.";
+  } else if (fromBroker) {
+    rule = "Эта сделка была у брокера и раньше в журнал не попала.";
+  } else if (pnl > 0 && /отскок/i.test(row.entryReason || "")) {
+    rule = "Закрыл отскок: от своего входа набрался плюс. У такой покупки цель около +0,6%.";
+  } else if (pnl > 0) {
+    rule = "Закрыл лонг по цели: от своего входа набрался плюс около 1% или больше. Это не ставка на отскок.";
+  } else if (pnl < 0) {
+    rule = "Закрыто по стопу: от своего входа набрался минус.";
+  } else {
+    rule = "Закрыто около нуля.";
+  }
+  return `${head}${pctText ? ", " + pctText : ""}. ${rule}`;
 }
 
 function renderLogic(list) {
@@ -420,13 +475,13 @@ function renderSandboxJournal(list) {
           const income = row.tradePnl == null ? "—" : `${row.tradePnl >= 0 ? "+" : ""}${money.format(row.tradePnl)} ₽`;
           const cls = row.tradePnl > 0 ? "up" : row.tradePnl < 0 ? "down" : "";
           return `<tr>
-            <td>${row.at.slice(11, 19)}</td>
+            <td>${mskClock(row.at)}</td>
             <td>${row.side === "buy" ? "Покупка" : "Продажа"}</td>
             <td>${row.ticker}</td>
             <td class="num">${row.lotsExecuted ?? row.lots}</td>
             <td class="num">${row.price == null ? "—" : priceFmt.format(row.price)}</td>
             <td class="num ${cls}">${income}</td>
-            <td>${row.reason || ""}</td>
+            <td>${shownReason(row)}</td>
           </tr>`;
         })
         .join("")
@@ -449,7 +504,52 @@ document.querySelector("#sandbox-pause").addEventListener("change", async () => 
   if (response.ok) renderSandbox(await response.json());
 });
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
+
+function chatHtml(messages) {
+  return (messages || []).length
+    ? messages.map((item) => `<p class="${item.role === "user" ? "user" : ""}"><strong>${item.role === "user" ? "Вы" : "Стол"}.</strong> ${escapeHtml(item.text)}</p>`).join("")
+    : `<p>Команд ещё не было.</p>`;
+}
+
+async function refreshChat() {
+  const node = document.querySelector("#chat");
+  if (!node) return;
+  const response = await fetch("/api/chat");
+  if (!response.ok) return;
+  const data = await response.json();
+  node.innerHTML = chatHtml(data.messages);
+  node.scrollTop = node.scrollHeight;
+}
+
+document.querySelector("#chat-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const input = document.querySelector("#chat-text");
+  const text = input.value.trim();
+  if (!text) return;
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  if (response.status === 401) {
+    showDesk(false);
+    return;
+  }
+  input.value = "";
+  if (response.ok) {
+    const data = await response.json();
+    const node = document.querySelector("#chat");
+    node.innerHTML = chatHtml(data.messages);
+  }
+});
+
 boot();
 setInterval(() => {
-  if (!els.desk.hidden) refreshSandbox();
+  if (!els.desk.hidden) {
+    refreshSandbox();
+    refreshChat();
+  }
 }, 60_000);

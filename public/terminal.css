@@ -97,13 +97,21 @@ th { color: var(--muted); font-weight: 500; }
 }
 .gate .panel { width: min(420px, 100%); }
 .check { display: flex; gap: 8px; align-items: center; color: var(--text); }
+.check[hidden] { display: none; }
 .check input { width: auto; }
 .split { margin-top: 22px; }
 input.cell { width: 88px; padding: 4px 6px; }
 .up { color: var(--ok); }
 .down { color: var(--danger); }
 .result { font-size: 28px; margin: 0 0 8px; color: var(--text); }
+.plan { margin: 0 0 12px; line-height: 1.45; white-space: pre-wrap; }
 #desk[hidden], #gate[hidden] { display: none; }
+#chat { display: grid; gap: 8px; max-height: 240px; overflow: auto; margin-bottom: 10px; }
+#chat p { margin: 0; }
+#chat .user { color: var(--text); }
+#chat-form { display: flex; gap: 8px; }
+#chat-form input { flex: 1; }
+.hint { margin-top: 8px; font-size: 13px; }
 @media (max-width: 900px) {
   .layout, .two { grid-template-columns: 1fr; }
 }

@@ -30,8 +30,10 @@
     </header>
     <main class="desk">
       <section class="panel">
+        <p id="day-plan" class="plan"></p>
         <p id="sandbox-result" class="result">Считаю...</p>
         <p id="sandbox-meta"></p>
+        <p id="position-plan" class="plan"></p>
         <p id="sandbox-decision"></p>
         <table>
           <thead>
@@ -44,7 +46,7 @@
         <h2>Журнал</h2>
         <table>
           <thead>
-            <tr><th>Время</th><th>Сторона</th><th>Бумага</th><th class="num">Лоты</th><th class="num">Цена</th><th class="num">Доход</th><th>Зачем</th></tr>
+            <tr><th>Время мск</th><th>Сторона</th><th>Бумага</th><th class="num">Лоты</th><th class="num">Цена</th><th class="num">Доход</th><th>Зачем</th></tr>
           </thead>
           <tbody id="sandbox-journal"></tbody>
         </table>
@@ -52,6 +54,15 @@
       <section class="panel">
         <h2>Логика</h2>
         <ol id="logic"></ol>
+      </section>
+      <section class="panel">
+        <h2>Команды</h2>
+        <div id="chat"></div>
+        <form id="chat-form">
+          <input id="chat-text" placeholder="Закрой BRV6" autocomplete="off" />
+          <button type="submit">Отправить</button>
+        </form>
+        <p class="hint">Закрой бумагу, закрой всё, пауза, продолжи, только нефть, вся книга, не шорти нефть. Команда уходит на следующем шаге бота.</p>
       </section>
       <p id="status"></p>
     </main>

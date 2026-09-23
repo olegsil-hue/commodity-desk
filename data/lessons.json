@@ -1,0 +1,711 @@
+{
+  "at": "2026-09-23T21:35:50.663Z",
+  "people": [
+    {
+      "nick": "Zalim_Sokhov",
+      "year": 47.08,
+      "from": 10000000
+    },
+    {
+      "nick": "Alex.Sidenko",
+      "year": 25.45,
+      "from": 10000000
+    },
+    {
+      "nick": "TiDi_Bonds",
+      "year": 25.23,
+      "from": 10000000
+    },
+    {
+      "nick": "AlexanderTsvetkov",
+      "year": 79.15,
+      "from": 10000000
+    }
+  ],
+  "tickers": [
+    {
+      "ticker": "TATNP",
+      "avg": 23.94,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-17T16:50:26.224Z",
+          "entry": 396.97,
+          "price": 492,
+          "yield": 23.94
+        }
+      ]
+    },
+    {
+      "ticker": "PRMD",
+      "avg": 17.46,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-17T16:50:26.224Z",
+          "entry": 298.95,
+          "price": 351.15,
+          "yield": 17.46
+        }
+      ]
+    },
+    {
+      "ticker": "OZON",
+      "avg": 15.84,
+      "n": 4,
+      "wins": 4,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-16T15:42:45.891Z",
+          "entry": 2515.49,
+          "price": 2719.5,
+          "yield": 8.11
+        },
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-10T11:20:27.541Z",
+          "entry": 2370.69,
+          "price": 2640,
+          "yield": 11.36
+        },
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-09-11T06:56:48.601Z",
+          "entry": 2161.72,
+          "price": 2521,
+          "yield": 16.62
+        }
+      ]
+    },
+    {
+      "ticker": "SGZH",
+      "avg": 13.98,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-08-24T14:56:50.797Z",
+          "entry": 0.53,
+          "price": 0.6045,
+          "yield": 13.98
+        }
+      ]
+    },
+    {
+      "ticker": "IMOEXF",
+      "avg": 12.93,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-08-24T14:56:50.797Z",
+          "entry": 1828.12,
+          "price": 2064.5,
+          "yield": 12.93
+        }
+      ]
+    },
+    {
+      "ticker": "LKOH",
+      "avg": 11.03,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-09-03T11:25:57.372Z",
+          "entry": 4408.27,
+          "price": 4894.5,
+          "yield": 11.03
+        }
+      ]
+    },
+    {
+      "ticker": "ELFV",
+      "avg": 10.83,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-21T11:09:04.927Z",
+          "entry": 0.31,
+          "price": 0.3416,
+          "yield": 10.83
+        }
+      ]
+    },
+    {
+      "ticker": "GAZP",
+      "avg": 9.2,
+      "n": 5,
+      "wins": 5,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-14T13:15:25.833Z",
+          "entry": 90.18,
+          "price": 96.19,
+          "yield": 6.66
+        },
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-09-21T10:19:58.779Z",
+          "entry": 91.59,
+          "price": 96.94,
+          "yield": 5.84
+        },
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-09-14T16:27:09.794Z",
+          "entry": 92.85,
+          "price": 97.6,
+          "yield": 5.12
+        }
+      ]
+    },
+    {
+      "ticker": "YDEX",
+      "avg": 9.07,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-08-24T14:56:50.797Z",
+          "entry": 3172.73,
+          "price": 3460.5,
+          "yield": 9.07
+        }
+      ]
+    },
+    {
+      "ticker": "DELI",
+      "avg": 7.92,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-07-15T11:49:25.904Z",
+          "entry": 38.59,
+          "price": 41.65,
+          "yield": 7.92
+        }
+      ]
+    },
+    {
+      "ticker": "TMOS@",
+      "avg": 6.62,
+      "n": 2,
+      "wins": 2,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-16T15:42:45.891Z",
+          "entry": 5.59,
+          "price": 5.7,
+          "yield": 1.93
+        },
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-17T16:50:26.224Z",
+          "entry": 4.69,
+          "price": 5.22,
+          "yield": 11.3
+        }
+      ]
+    },
+    {
+      "ticker": "AFLT",
+      "avg": 6.35,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-08-31T13:11:08.945Z",
+          "entry": 29.19,
+          "price": 31.04,
+          "yield": 6.35
+        }
+      ]
+    },
+    {
+      "ticker": "SELG",
+      "avg": 5.87,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-07T19:25:39.736Z",
+          "entry": 32.84,
+          "price": 34.77,
+          "yield": 5.87
+        }
+      ]
+    },
+    {
+      "ticker": "NAZ6",
+      "avg": 5.26,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-09-14T11:14:44.202Z",
+          "entry": 27496.67,
+          "price": 28943,
+          "yield": 5.26
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10FAK6",
+      "avg": 4.6,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-10T10:23:29.689Z",
+          "entry": 8819.31,
+          "price": 9225,
+          "yield": 4.6
+        }
+      ]
+    },
+    {
+      "ticker": "USDRUBF",
+      "avg": 4.58,
+      "n": 3,
+      "wins": 2,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-09-03T11:25:57.372Z",
+          "entry": 88.06,
+          "price": 86.68,
+          "yield": -1.57
+        },
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-08-04T11:46:05.055Z",
+          "entry": 77.09,
+          "price": 81.1,
+          "yield": 5.2
+        },
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-07-14T09:38:13.403Z",
+          "entry": 70.38,
+          "price": 77.49,
+          "yield": 10.1
+        }
+      ]
+    },
+    {
+      "ticker": "AFKS",
+      "avg": 3.97,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-08-24T14:56:50.797Z",
+          "entry": 6.93,
+          "price": 7.201,
+          "yield": 3.97
+        }
+      ]
+    },
+    {
+      "ticker": "SNGS",
+      "avg": 3.26,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-17T16:50:26.224Z",
+          "entry": 14.86,
+          "price": 15.345,
+          "yield": 3.26
+        }
+      ]
+    },
+    {
+      "ticker": "VSEH",
+      "avg": 3.03,
+      "n": 2,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-07T19:25:39.736Z",
+          "entry": 65.63,
+          "price": 69.84,
+          "yield": 6.41
+        },
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-17T16:50:26.224Z",
+          "entry": 74.84,
+          "price": 74.58,
+          "yield": -0.35
+        }
+      ]
+    },
+    {
+      "ticker": "UGLD",
+      "avg": 2.29,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-21T11:09:04.927Z",
+          "entry": 0.69,
+          "price": 0.7059,
+          "yield": 2.29
+        }
+      ]
+    },
+    {
+      "ticker": "CNRU",
+      "avg": 2.15,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-08-04T11:53:53.303Z",
+          "entry": 619.68,
+          "price": 633,
+          "yield": 2.15
+        }
+      ]
+    },
+    {
+      "ticker": "NVTK",
+      "avg": 2.12,
+      "n": 2,
+      "wins": 2,
+      "samples": [
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-09-14T16:27:09.794Z",
+          "entry": 1079.25,
+          "price": 1079.9,
+          "yield": 0.06
+        },
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-09-11T06:56:48.601Z",
+          "entry": 995.58,
+          "price": 1037.2,
+          "yield": 4.18
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A104KU3",
+      "avg": 1.51,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-09T15:15:59.649Z",
+          "entry": 1172.3,
+          "price": 1190,
+          "yield": 1.51
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A1022Z1",
+      "avg": 1.23,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-09T15:15:59.649Z",
+          "entry": 8110.24,
+          "price": 8210,
+          "yield": 1.23
+        }
+      ]
+    },
+    {
+      "ticker": "TMON@",
+      "avg": 1.12,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-08-21T11:09:04.927Z",
+          "entry": 161.16,
+          "price": 162.96,
+          "yield": 1.12
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10EVE8",
+      "avg": 1.01,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-09T15:15:59.649Z",
+          "entry": 880.11,
+          "price": 889,
+          "yield": 1.01
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A1094U1",
+      "avg": 0.64,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-15T08:05:05.923Z",
+          "entry": 937.9,
+          "price": 943.9,
+          "yield": 0.64
+        }
+      ]
+    },
+    {
+      "ticker": "ALRS",
+      "avg": 0.6,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Zalim_Sokhov",
+          "at": "2026-09-03T11:25:57.372Z",
+          "entry": 19.75,
+          "price": 19.87,
+          "yield": 0.6
+        }
+      ]
+    },
+    {
+      "ticker": "T",
+      "avg": 0.6,
+      "n": 2,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-16T12:16:02.882Z",
+          "entry": 260.54,
+          "price": 260.44,
+          "yield": -0.04
+        },
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-03T11:38:24.750Z",
+          "entry": 253.95,
+          "price": 257.12,
+          "yield": 1.25
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10G5H1",
+      "avg": 0.49,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-21T11:39:48.243Z",
+          "entry": 990.94,
+          "price": 995.8,
+          "yield": 0.49
+        }
+      ]
+    },
+    {
+      "ticker": "TBRU@",
+      "avg": 0.36,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-07T19:25:39.736Z",
+          "entry": 8.42,
+          "price": 8.45,
+          "yield": 0.36
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10DEE6",
+      "avg": 0.24,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-15T08:05:05.923Z",
+          "entry": 997.81,
+          "price": 1000.2,
+          "yield": 0.24
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10G5F5",
+      "avg": 0.2,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-21T11:39:48.243Z",
+          "entry": 994.41,
+          "price": 996.4,
+          "yield": 0.2
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A1008Y3",
+      "avg": 0.08,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-21T13:09:31.548Z",
+          "entry": 1014.19,
+          "price": 1015,
+          "yield": 0.08
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10B7T7",
+      "avg": 0.07,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-22T07:28:53.153Z",
+          "entry": 98.63,
+          "price": 98.7,
+          "yield": 0.07
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10FQW7",
+      "avg": 0.01,
+      "n": 1,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-22T07:28:53.153Z",
+          "entry": 1014.5,
+          "price": 1014.6,
+          "yield": 0.01
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10DZT9",
+      "avg": -0.02,
+      "n": 1,
+      "wins": 0,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-21T13:09:31.548Z",
+          "entry": 1017.9,
+          "price": 1017.7,
+          "yield": -0.02
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10FQV9",
+      "avg": -0.03,
+      "n": 2,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-22T07:28:53.153Z",
+          "entry": 1002.4,
+          "price": 1001.3,
+          "yield": -0.11
+        },
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-21T11:39:48.243Z",
+          "entry": 999,
+          "price": 999.6,
+          "yield": 0.06
+        }
+      ]
+    },
+    {
+      "ticker": "TLCB@",
+      "avg": -0.04,
+      "n": 2,
+      "wins": 1,
+      "samples": [
+        {
+          "nick": "Alex.Sidenko",
+          "at": "2026-09-07T19:25:39.736Z",
+          "entry": 11.29,
+          "price": 11.24,
+          "yield": -0.44
+        },
+        {
+          "nick": "AlexanderTsvetkov",
+          "at": "2026-08-17T11:58:27.603Z",
+          "entry": 11.11,
+          "price": 11.15,
+          "yield": 0.36
+        }
+      ]
+    },
+    {
+      "ticker": "RU000A10G486",
+      "avg": -0.04,
+      "n": 1,
+      "wins": 0,
+      "samples": [
+        {
+          "nick": "TiDi_Bonds",
+          "at": "2026-09-23T06:06:13.840Z",
+          "entry": 998.8,
+          "price": 998.4,
+          "yield": -0.04
+        }
+      ]
+    }
+  ]
+}

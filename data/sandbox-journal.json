@@ -1,5 +1,21 @@
 [
   {
+    "at": "2026-09-23T20:00:55.365751Z",
+    "venue": "live",
+    "side": "sell",
+    "ticker": "BRV6",
+    "name": "BR-10.26 Нефть Brent",
+    "lots": 1,
+    "lotSize": 1,
+    "price": 103.55,
+    "amount": 87050.03,
+    "orderId": "1960787561455203175",
+    "brokerOp": "1960787561455203175",
+    "status": "EXECUTION_REPORT_STATUS_FILL",
+    "lotsExecuted": 1,
+    "reason": "Сделка есть у брокера, в журнале стола её не было."
+  },
+  {
     "at": "2026-09-23T19:05:57.393Z",
     "venue": "live",
     "side": "sell",

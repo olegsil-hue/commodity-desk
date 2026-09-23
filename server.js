@@ -10,6 +10,7 @@ const broker = require("./lib/broker");
 const watch = require("./lib/watch");
 const journal = require("./lib/journal");
 const sandboxRun = require("./lib/sandbox-run");
+const deskChat = require("./lib/desk-chat");
 
 const ROOT = __dirname;
 const PORT = Number(process.env.PORT) || 4173;
@@ -163,6 +164,20 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "POST" && url.pathname === "/api/flatten") {
       send(res, 200, JSON.stringify(paper.flatten()));
+      return;
+    }
+    if (req.method === "GET" && url.pathname === "/api/chat") {
+      send(res, 200, JSON.stringify({ messages: await deskChat.readChat() }));
+      return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/chat") {
+      const body = await readBody(req);
+      const text = String(body.text || "").trim().slice(0, 400);
+      if (!text) {
+        send(res, 400, JSON.stringify({ error: "Напишите команду." }));
+        return;
+      }
+      send(res, 200, JSON.stringify({ messages: await deskChat.enqueue(text) }));
       return;
     }
     if (req.method === "GET" && url.pathname === "/api/sandbox") {

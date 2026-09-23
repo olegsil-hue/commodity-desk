@@ -25,6 +25,7 @@ jobs:
           path: |
             data/sandbox-auto.json
             data/sandbox-journal.json
+            data/lessons.json
           key: desk-state-${{ github.run_id }}
           restore-keys: |
             desk-state-
