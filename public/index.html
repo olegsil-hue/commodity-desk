@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Терминал MOEX</title>
+  <link rel="stylesheet" href="/terminal.css" />
+</head>
+<body>
+  <section id="gate" class="gate">
+    <form id="gate-form" class="panel">
+      <h1 id="gate-title">Вход админа</h1>
+      <p id="gate-hint">Стол на этом компьютере. Пароль хранится только локально.</p>
+      <label for="password">Пароль</label>
+      <input id="password" type="password" autocomplete="current-password" />
+      <button class="primary ghost" type="submit">Войти</button>
+      <p id="gate-status"></p>
+    </form>
+  </section>
+  <div id="desk" hidden>
+    <header>
+      <div>
+        <h1>Боевой счёт</h1>
+        <p id="meta">Считаю...</p>
+      </div>
+      <div class="toolbar">
+        <label class="check"><input id="sandbox-pause" type="checkbox" /> Пауза</label>
+        <button class="tiny" id="logout" type="button">Выйти</button>
+      </div>
+    </header>
+    <main class="desk">
+      <section class="panel">
+        <p id="sandbox-result" class="result">Считаю...</p>
+        <p id="sandbox-meta"></p>
+        <p id="sandbox-decision"></p>
+        <table>
+          <thead>
+            <tr><th>Бумага</th><th class="num">Шт.</th><th class="num">Вход</th><th class="num">Сейчас</th><th class="num">Результат</th></tr>
+          </thead>
+          <tbody id="sandbox-lines"></tbody>
+        </table>
+      </section>
+      <section class="panel">
+        <h2>Журнал</h2>
+        <table>
+          <thead>
+            <tr><th>Время</th><th>Сторона</th><th>Бумага</th><th class="num">Лоты</th><th class="num">Цена</th><th class="num">Доход</th><th>Зачем</th></tr>
+          </thead>
+          <tbody id="sandbox-journal"></tbody>
+        </table>
+      </section>
+      <section class="panel">
+        <h2>Логика</h2>
+        <ol id="logic"></ol>
+      </section>
+      <p id="status"></p>
+    </main>
+  </div>
+  <script src="/terminal.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+name: morning
+on:
+  schedule:
+    - cron: "55 5 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      publish_only:
+        description: Только обновить экран, без новой заявки
+        type: boolean
+        default: true
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    concurrency:
+      group: moex-live
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/cache@v4
+        with:
+          path: |
+            data/sandbox-auto.json
+            data/sandbox-journal.json
+          key: desk-state-${{ github.run_id }}
+          restore-keys: |
+            desk-state-
+      - name: Session
+        run: node scripts/cloud-session.js
+        env:
+          SESSION_SLOT: morning
+          PUBLISH_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_only && '1' || '0' }}
+          TBANK_TOKEN: ${{ secrets.TBANK_TOKEN }}
+          TBANK_ACCOUNT_ID: ${{ secrets.TBANK_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
