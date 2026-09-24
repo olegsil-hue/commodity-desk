@@ -1,7 +1,5 @@
 name: afternoon
 on:
-  schedule:
-    - cron: "25 11 * * 1-5"
   workflow_dispatch:
 jobs:
   trade:

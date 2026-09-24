@@ -1,15 +1,12 @@
-name: morning
+name: session
 on:
+  schedule:
+    - cron: "*/5 6-15 * * 1-5"
   workflow_dispatch:
-    inputs:
-      publish_only:
-        description: Только обновить экран, без новой заявки
-        type: boolean
-        default: true
 jobs:
   trade:
     runs-on: ubuntu-latest
-    timeout-minutes: 340
+    timeout-minutes: 15
     concurrency:
       group: moex-live
       cancel-in-progress: false
@@ -28,15 +25,10 @@ jobs:
           key: desk-state-${{ github.run_id }}
           restore-keys: |
             desk-state-
-      - name: Mind
-        run: node scripts/desk-mind.js
-        env:
-          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
-      - name: Session
+      - name: Step
         run: node scripts/cloud-session.js
         env:
-          SESSION_SLOT: morning
-          PUBLISH_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_only && '1' || '0' }}
+          SESSION_SLOT: tick
           TBANK_TOKEN: ${{ secrets.TBANK_TOKEN }}
           TBANK_ACCOUNT_ID: ${{ secrets.TBANK_ACCOUNT_ID }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

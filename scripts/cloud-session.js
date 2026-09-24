@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const journal = require("../lib/journal");
+const studyDb = require("../lib/study-db");
 const { step, picture } = require("../lib/sandbox-run");
 
 function remembered() {
@@ -31,6 +32,7 @@ function publicView(box) {
     lines: box?.lines || [],
     plan: box?.plan || null,
     days: box?.days || [],
+    study: box?.study || studyDb.latest(),
     priceNote: box?.priceNote || "",
     lastDecision: box?.lastDecision || "",
     logic: box?.logic || [],
@@ -77,6 +79,10 @@ async function main() {
   }
   if (process.env.PUBLISH_ONLY === "1") {
     await publish({ ...(await picture()), ...remembered() });
+    return;
+  }
+  if (process.env.SESSION_SLOT === "tick") {
+    await publish(await step());
     return;
   }
   const end = sessionEnd();
