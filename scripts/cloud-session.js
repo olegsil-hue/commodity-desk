@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const journal = require("../lib/journal");
 const studyDb = require("../lib/study-db");
+const deskChat = require("../lib/desk-chat");
 const { step, picture } = require("../lib/sandbox-run");
 
 function remembered() {
@@ -82,6 +83,10 @@ async function main() {
     return;
   }
   if (process.env.SESSION_SLOT === "tick") {
+    if (await deskChat.localAwake()) {
+      console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
+      return;
+    }
     await publish(await step());
     return;
   }
