@@ -326,7 +326,43 @@ document.querySelector("#logout").addEventListener("click", async () => {
   showDesk(false);
 });
 
+document.querySelector("#tab-account").addEventListener("click", () => {
+  document.querySelector("#sheet-account").hidden = false;
+  document.querySelector("#sheet-days").hidden = true;
+  document.querySelector("#tab-account").classList.add("on");
+  document.querySelector("#tab-days").classList.remove("on");
+});
+
+document.querySelector("#tab-days").addEventListener("click", () => {
+  document.querySelector("#sheet-account").hidden = true;
+  document.querySelector("#sheet-days").hidden = false;
+  document.querySelector("#tab-days").classList.add("on");
+  document.querySelector("#tab-account").classList.remove("on");
+});
+
+function renderDays(days) {
+  const list = document.querySelector("#day-list");
+  const detail = document.querySelector("#day-detail");
+  list.innerHTML = "";
+  (days || []).forEach((day, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ghost day-row";
+    const sign = day.pnl > 0 ? "+" : "";
+    const pct = `${sign}${Number(day.pct || 0).toLocaleString("ru-RU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+    button.innerHTML = `<span>${escapeHtml(day.id)} · ${escapeHtml(day.label)}</span><span>${money.format(day.start)} ₽ · ${sign}${money.format(Math.abs(day.pnl))} ₽ · ${pct}</span>`;
+    button.addEventListener("click", () => {
+      detail.hidden = false;
+      detail.innerHTML = `<h2>${escapeHtml(day.id)} · ${escapeHtml(day.label)}</h2><p class="plan">${escapeHtml(day.strategy || "")}</p><table><thead><tr><th>Время мск</th><th>Сторона</th><th>Бумага</th><th class="num">Лоты</th><th class="num">Цена</th><th class="num">Доход</th><th>Зачем</th></tr></thead><tbody id="day-journal"></tbody></table>`;
+      renderSandboxJournal(day.journal || [], document.querySelector("#day-journal"));
+    });
+    list.appendChild(button);
+    if (index === 0 && detail.hidden) button.click();
+  });
+}
+
 function renderSandbox(box) {
+  if (!box) return;
   if (!box) return;
   els.sandboxPause.checked = box.enabled === false;
   if (!box.ready) {
@@ -366,6 +402,7 @@ function renderSandbox(box) {
     : `<tr><td colspan="5">Открытых позиций нет</td></tr>`;
   if (box.journal) renderSandboxJournal(box.journal);
   renderLogic(box.logic);
+  renderDays(box.days || []);
 }
 
 function mskClock(iso) {
@@ -466,11 +503,11 @@ function renderLogic(list) {
     : `<li>Жду первый разбор после проверки книги.</li>`;
 }
 
-function renderSandboxJournal(list) {
+function renderSandboxJournal(list, target) {
   const live = tradeIncome(list);
-  els.sandboxJournal.innerHTML = live.length
+  const html = live.length
     ? live
-        .slice(0, 20)
+        .slice(0, 40)
         .map((row) => {
           const income = row.tradePnl == null ? "—" : `${row.tradePnl >= 0 ? "+" : ""}${money.format(row.tradePnl)} ₽`;
           const cls = row.tradePnl > 0 ? "up" : row.tradePnl < 0 ? "down" : "";
@@ -486,6 +523,7 @@ function renderSandboxJournal(list) {
         })
         .join("")
     : `<tr><td colspan="7">Заявок боевого счёта ещё нет</td></tr>`;
+  (target || els.sandboxJournal).innerHTML = html;
 }
 
 async function refreshSandbox() {

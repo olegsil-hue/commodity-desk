@@ -24,11 +24,13 @@
         <p id="meta">Считаю...</p>
       </div>
       <div class="toolbar">
+        <button class="tiny on" id="tab-account" type="button">Счёт</button>
+        <button class="tiny" id="tab-days" type="button">Дни</button>
         <label class="check"><input id="sandbox-pause" type="checkbox" /> Пауза</label>
         <button class="tiny" id="logout" type="button">Выйти</button>
       </div>
     </header>
-    <main class="desk">
+    <main class="desk" id="sheet-account">
       <section class="panel">
         <p id="day-plan" class="plan"></p>
         <p id="sandbox-result" class="result">Считаю...</p>
@@ -62,9 +64,16 @@
           <input id="chat-text" placeholder="Закрой BRV6" autocomplete="off" />
           <button type="submit">Отправить</button>
         </form>
-        <p class="hint">Закрой бумагу, закрой всё, пауза, продолжи, только нефть, вся книга, не шорти нефть. Команда уходит на следующем шаге бота.</p>
+        <p class="hint">Ответ приходит сразу. Закрытие бумаги стол исполнит на следующем шаге, около 8:55.</p>
       </section>
       <p id="status"></p>
+    </main>
+    <main class="desk" id="sheet-days" hidden>
+      <section class="panel">
+        <h2>Торговые дни</h2>
+        <div id="day-list"></div>
+        <article id="day-detail" hidden></article>
+      </section>
     </main>
   </div>
   <script src="/terminal.js"></script>

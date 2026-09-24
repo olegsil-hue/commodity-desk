@@ -30,6 +30,7 @@ function publicView(box) {
     pnl: box?.pnl,
     lines: box?.lines || [],
     plan: box?.plan || null,
+    days: box?.days || [],
     priceNote: box?.priceNote || "",
     lastDecision: box?.lastDecision || "",
     logic: box?.logic || [],
@@ -91,7 +92,11 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err.message);
+    process.exit(1);
+  });
+}
+
+module.exports = { publicView };

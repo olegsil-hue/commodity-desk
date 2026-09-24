@@ -112,6 +112,10 @@ input.cell { width: 88px; padding: 4px 6px; }
 #chat-form { display: flex; gap: 8px; }
 #chat-form input { flex: 1; }
 .hint { margin-top: 8px; font-size: 13px; }
+.tiny.on { border-color: var(--ok); color: var(--ok); }
+.day-row { display: flex; justify-content: space-between; gap: 12px; width: 100%; text-align: left; margin-bottom: 8px; }
+#day-detail { margin-top: 16px; }
+#day-detail table { margin-top: 12px; }
 @media (max-width: 900px) {
   .layout, .two { grid-template-columns: 1fr; }
 }

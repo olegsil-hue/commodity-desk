@@ -21,9 +21,14 @@ jobs:
             data/sandbox-auto.json
             data/sandbox-journal.json
             data/lessons.json
+            data/days.json
           key: desk-state-${{ github.run_id }}
           restore-keys: |
             desk-state-
+      - name: Mind
+        run: node scripts/desk-mind.js
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
       - name: Session
         run: node scripts/cloud-session.js
         env:
