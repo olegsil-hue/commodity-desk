@@ -88,8 +88,11 @@ async function main() {
     return;
   }
   if (process.env.SESSION_SLOT === "tick") {
-    if (await deskChat.localAwake()) {
-      console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
+    const awake = await deskChat.localAwake();
+    if (awake !== false) {
+      console.log(new Date().toISOString(), awake === "unknown"
+        ? "пульс локального стола не прочитан, заявку с GitHub не ставлю"
+        : "локальный стол жив, заявку с GitHub не ставлю");
       return;
     }
     await publish(await step());
