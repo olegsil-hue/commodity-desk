@@ -1,7 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const journal = require("../lib/journal");
-const studyDb = require("../lib/study-db");
+let studyDb = { latest() { return null; } };
+try {
+  studyDb = require("../lib/study-db");
+} catch {
+  // Файл учёбы может отсутствовать на GitHub. Торговля от этого не зависит.
+}
 const deskChat = require("../lib/desk-chat");
 const { step, picture } = require("../lib/sandbox-run");
 
