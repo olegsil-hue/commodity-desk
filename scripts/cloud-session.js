@@ -74,9 +74,10 @@ async function publish(box) {
 }
 
 function sessionEnd() {
-  if (process.env.SESSION_SLOT === "morning") return 14 * 60 + 25;
-  if (process.env.SESSION_SLOT === "afternoon") return 18 * 60 + 50;
-  return 18 * 60 + 50;
+  const hour = new Date().getUTCHours();
+  if (hour < 12) return 12 * 60;
+  if (hour < 18) return 18 * 60;
+  return 20 * 60 + 50;
 }
 
 async function main() {
@@ -87,12 +88,29 @@ async function main() {
     await publish({ ...(await picture()), ...remembered() });
     return;
   }
+  if (process.env.SESSION_SLOT === "shift") {
+    const end = sessionEnd();
+    console.log(new Date().toISOString(), "смена GitHub до конца окна, минута мск", end);
+    while (mskMinutes() < end) {
+      const awake = await deskChat.localAwake();
+      if (awake === true) {
+        console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
+      } else {
+        try {
+          await publish(await step());
+        } catch (err) {
+          console.log(new Date().toISOString(), "шаг не прошёл:", err.message);
+        }
+      }
+      const left = (end - mskMinutes()) * 60 * 1000;
+      if (left <= 0) break;
+      await new Promise((resolve) => setTimeout(resolve, Math.min(60_000, left)));
+    }
+    return;
+  }
   if (process.env.SESSION_SLOT === "tick") {
-    const awake = await deskChat.localAwake();
-    if (awake !== false) {
-      console.log(new Date().toISOString(), awake === "unknown"
-        ? "пульс локального стола не прочитан, заявку с GitHub не ставлю"
-        : "локальный стол жив, заявку с GitHub не ставлю");
+    if (await deskChat.localAwake() === true) {
+      console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
       return;
     }
     await publish(await step());
@@ -101,7 +119,11 @@ async function main() {
   const end = sessionEnd();
   while (mskMinutes() < end) {
     try {
-      await publish(await step());
+      if (await deskChat.localAwake() === true) {
+        console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
+      } else {
+        await publish(await step());
+      }
     } catch (err) {
       console.log(new Date().toISOString(), "шаг не прошёл:", err.message);
     }
