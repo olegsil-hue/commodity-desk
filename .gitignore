@@ -1,5 +1,7 @@
 node_modules/
 data/broker.json
+data/history-operations.json
+data/history-trades.json
 data/admin.json
 data/sessions.json
 data/checkpoints.json
@@ -7,3 +9,4 @@ data/overrides.json
 data/paper-account.json
 data/watch-book.json
 data/live-mirror.json
+data/study.db

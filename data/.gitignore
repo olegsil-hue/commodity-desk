@@ -1,5 +1,7 @@
 admin.json
 sessions.json
 broker.json
+history-operations.json
+history-trades.json
 overrides.json
 checkpoints.json
