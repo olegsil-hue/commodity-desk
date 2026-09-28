@@ -11,6 +11,7 @@ const watch = require("./lib/watch");
 const journal = require("./lib/journal");
 const sandboxRun = require("./lib/sandbox-run");
 const deskChat = require("./lib/desk-chat");
+const notify = require("./lib/notify");
 
 const ROOT = __dirname;
 const PORT = Number(process.env.PORT) || 4173;
@@ -253,7 +254,18 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, "127.0.0.1", () => {
   console.log(`paper desk http://127.0.0.1:${PORT}`);
-  const run = () => sandboxRun.step().catch((err) => console.error("sandbox", err.message));
+  const screen = process.env.SCREEN_ONLY === "1";
+  notify.send(screen ? "Экран на компьютере запустился." : "Стол на компьютере запустился.").catch(() => {});
+  const stop = () => {
+    notify.send(screen ? "Экран на компьютере остановился." : "Стол на компьютере остановился.")
+      .finally(() => process.exit(0));
+  };
+  process.once("SIGINT", stop);
+  process.once("SIGTERM", stop);
+  const run = () => {
+    const job = process.env.SCREEN_ONLY === "1" ? sandboxRun.show() : sandboxRun.step();
+    job.catch((err) => console.error("sandbox", err.message));
+  };
   setTimeout(run, 5000);
   setInterval(run, 60_000);
 });

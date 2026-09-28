@@ -1,5 +1,6 @@
 node_modules/
 data/broker.json
+data/telegram.json
 data/history-operations.json
 data/history-trades.json
 data/admin.json

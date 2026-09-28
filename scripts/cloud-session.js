@@ -8,6 +8,7 @@ try {
   // Файл учёбы может отсутствовать на GitHub. Торговля от этого не зависит.
 }
 const deskChat = require("../lib/desk-chat");
+const notify = require("../lib/notify");
 const { step, picture } = require("../lib/sandbox-run");
 
 function remembered() {
@@ -91,20 +92,34 @@ async function main() {
   if (process.env.SESSION_SLOT === "shift") {
     const end = sessionEnd();
     console.log(new Date().toISOString(), "смена GitHub до конца окна, минута мск", end);
-    while (mskMinutes() < end) {
-      const awake = await deskChat.localAwake();
-      if (awake === true) {
-        console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
-      } else {
-        try {
-          await publish(await step());
-        } catch (err) {
-          console.log(new Date().toISOString(), "шаг не прошёл:", err.message);
+    await notify.send("Стол запустился.");
+    let lastStatus = Date.now();
+    try {
+      while (mskMinutes() < end) {
+        const awake = await deskChat.localAwake();
+        let traded = false;
+        if (awake === true) {
+          console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
+        } else {
+          try {
+            const box = await step();
+            traded = /(?:Купил|Продал|Закрыл) /.test(box?.lastDecision || "");
+            await publish(box);
+          } catch (err) {
+            console.log(new Date().toISOString(), "шаг не прошёл:", err.message);
+          }
         }
+        if (traded) lastStatus = Date.now();
+        else if (Date.now() - lastStatus >= 55 * 60 * 1000) {
+          await notify.send("Стол работает. Новых сделок нет.");
+          lastStatus = Date.now();
+        }
+        const left = (end - mskMinutes()) * 60 * 1000;
+        if (left <= 0) break;
+        await new Promise((resolve) => setTimeout(resolve, Math.min(60_000, left)));
       }
-      const left = (end - mskMinutes()) * 60 * 1000;
-      if (left <= 0) break;
-      await new Promise((resolve) => setTimeout(resolve, Math.min(60_000, left)));
+    } finally {
+      await notify.send("Стол остановился.");
     }
     return;
   }
