@@ -92,10 +92,12 @@ async function main() {
   if (process.env.SESSION_SLOT === "shift") {
     const end = sessionEnd();
     console.log(new Date().toISOString(), "смена GitHub до конца окна, минута мск", end);
+    await notify.commands();
     await notify.send("Стол запустился.");
     let lastStatus = Date.now();
     try {
       while (mskMinutes() < end) {
+        await notify.pull().catch(() => {});
         const awake = await deskChat.localAwake();
         let traded = false;
         if (awake === true) {

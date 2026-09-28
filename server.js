@@ -264,8 +264,10 @@ server.listen(PORT, "127.0.0.1", () => {
   process.once("SIGTERM", stop);
   const run = () => {
     const job = process.env.SCREEN_ONLY === "1" ? sandboxRun.show() : sandboxRun.step();
-    job.catch((err) => console.error("sandbox", err.message));
+    job.then(() => notify.pull()).catch((err) => console.error("sandbox", err.message));
   };
+  notify.commands().catch(() => {});
+  notify.pull().catch(() => {});
   setTimeout(run, 5000);
   setInterval(run, 60_000);
 });
