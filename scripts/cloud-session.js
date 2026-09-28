@@ -76,9 +76,9 @@ async function publish(box) {
 
 function sessionEnd() {
   const hour = new Date().getUTCHours();
-  if (hour < 12) return 12 * 60;
-  if (hour < 18) return 18 * 60;
-  return 20 * 60 + 50;
+  if (hour < 12) return 15 * 60;
+  if (hour < 18) return 21 * 60;
+  return 23 * 60 + 50;
 }
 
 async function main() {
