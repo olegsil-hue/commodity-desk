@@ -25,6 +25,7 @@ jobs:
             data/lessons.json
             data/days.json
             data/experience.json
+            data/sandbox-days.json
           key: desk-state-${{ github.run_id }}
           restore-keys: |
             desk-state-

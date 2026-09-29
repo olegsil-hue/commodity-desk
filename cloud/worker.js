@@ -120,11 +120,14 @@ export default {
       const raw = await env.SNAPSHOT.get("live");
       const box = raw ? JSON.parse(raw) : {};
       const tail = box.tail || "";
+      const venue = box.venue === "sandbox" ? "sandbox" : "live";
       return json({
         connected: true,
-        mode: "live",
+        mode: venue,
+        venue,
         tail,
-        live: { connected: Boolean(tail), tail },
+        live: { connected: venue !== "sandbox" && Boolean(tail), tail: venue === "sandbox" ? "" : tail },
+        sandbox: { connected: venue === "sandbox", tail: venue === "sandbox" ? tail : "" },
       });
     }
     if (url.pathname === "/api/chat" && request.method === "GET") {

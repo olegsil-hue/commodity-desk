@@ -8,6 +8,7 @@ try {
   // Файл учёбы может отсутствовать на GitHub. Торговля от этого не зависит.
 }
 const deskChat = require("../lib/desk-chat");
+const broker = require("../lib/broker");
 const notify = require("../lib/notify");
 const { step, picture } = require("../lib/sandbox-run");
 
@@ -25,9 +26,11 @@ function mskMinutes(now = new Date()) {
 }
 
 function publicView(box) {
-  const rows = journal.load().filter((row) => row.venue === "live").slice(0, 40);
+  const venue = box?.venue || "live";
+  const rows = journal.load().filter((row) => row.venue === venue).slice(0, 40);
   return {
     ready: Boolean(box?.ready),
+    venue,
     text: box?.text || "",
     deposited: box?.deposited,
     cash: box?.cash,
@@ -93,7 +96,9 @@ async function main() {
     const end = sessionEnd();
     console.log(new Date().toISOString(), "смена GitHub до конца окна, минута мск", end);
     await notify.commands();
-    await notify.send("Стол запустился.");
+    await notify.send(broker.venue() === "sandbox"
+      ? "Стол запустился в песочнице. Боевой счёт не трогаю."
+      : "Стол запустился.");
     let lastStatus = Date.now();
     try {
       while (mskMinutes() < end) {
@@ -113,7 +118,9 @@ async function main() {
         }
         if (traded) lastStatus = Date.now();
         else if (Date.now() - lastStatus >= 55 * 60 * 1000) {
-          await notify.send("Стол работает. Новых сделок нет.");
+          await notify.send(broker.venue() === "sandbox"
+            ? "Стол работает в песочнице. Новых сделок нет. Боевой счёт не трогаю."
+            : "Стол работает. Новых сделок нет.");
           lastStatus = Date.now();
         }
         const left = (end - mskMinutes()) * 60 * 1000;

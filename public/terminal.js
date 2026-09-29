@@ -203,6 +203,11 @@ function renderAccount(account) {
 function renderBroker(info) {
   document.querySelector("#sandbox-open").disabled = false;
   document.querySelector("#sandbox-pay").disabled = false;
+  if (info?.venue === "sandbox" || info?.mode === "sandbox") {
+    const tail = info.sandbox?.tail || info.tail || "";
+    els.banner.textContent = `Песочница${tail ? ` …${tail}` : ""}. На биржу не идёт. Боевой счёт заявки не получает.`;
+    return;
+  }
   const parts = [];
   if (info?.sandbox?.connected) parts.push(`Песочница …${info.sandbox.tail}, на биржу не идёт`);
   if (info?.live?.connected) parts.push(`Боевой счёт …${info.live.tail}. Лимит — свободные рубли на счёте`);
@@ -247,9 +252,11 @@ async function bootDesk() {
   }
   const broker = await response.json();
   const live = broker.live;
-  els.meta.textContent = live?.connected
-    ? `Боевой счёт …${live.tail}. Лимит — свободные рубли на счёте.`
-    : "Боевой счёт не подключён.";
+  els.meta.textContent = broker.venue === "sandbox" || broker.mode === "sandbox"
+    ? `Песочница${broker.sandbox?.tail ? ` …${broker.sandbox.tail}` : ""}. На биржу не идёт. Боевой счёт заявки не получает.`
+    : live?.connected
+      ? `Боевой счёт …${live.tail}. Лимит — свободные рубли на счёте.`
+      : "Боевой счёт не подключён.";
   await refreshSandbox();
 }
 
@@ -380,10 +387,19 @@ function renderSandbox(box) {
   els.sandboxResult.className = `result ${pnl >= 0 ? "up" : "down"}`;
   const updated = box.updatedAt ? ` Обновлено ${mskClock(box.updatedAt).slice(0, 5)} мск.` : "";
   const oilText = box.futuresSettled
-    ? `Нефть ${money.format(box.futuresPnl || 0)} ₽ уже внутри свободных денег.`
-    : `Нефть ${money.format(box.futuresPnl || 0)} ₽.`;
-  els.sandboxMeta.textContent = `Внесено ${money.format(box.deposited)} ₽. Свободно ${money.format(box.available || box.cash)} ₽. Акции ${money.format(box.stockValue || 0)} ₽. ${oilText}${updated}`;
+    ? `Фьючерсы ${money.format(box.futuresPnl || 0)} ₽ уже внутри свободных денег.`
+    : `Фьючерсы ${money.format(box.futuresPnl || 0)} ₽.`;
+  els.sandboxMeta.textContent = `${box.venue === "sandbox" ? "Песочница, не боевой счёт. " : ""}Внесено ${money.format(box.deposited)} ₽. Свободно ${money.format(box.available || box.cash)} ₽. Акции ${money.format(box.stockValue || 0)} ₽. ${oilText}${updated}`;
   if (els.dayPlan) els.dayPlan.textContent = box.plan?.day || "";
+  const study = document.querySelector("#study-note");
+  if (study) {
+    const links = (box.study?.links || []).slice(0, 4).map((row) => `${row.right} ${row.corr}`).join(", ");
+    const flags = (box.study?.flags || []).slice(0, 2).map((row) => row.detail).join(" ");
+    const hedges = (box.study?.hedges || []).slice(0, 2).map((row) => row.text).join(" ");
+    study.textContent = box.study
+      ? `База: сделок ${box.study.totals?.trades || 0}, новостей ${box.study.totals?.news || 0}. Связи с нефтью: ${links || "ещё считаю"}. ${hedges} ${flags} ${box.study.note || ""}`.trim()
+      : hedges;
+  }
   if (els.positionPlan) els.positionPlan.textContent = (box.plan?.positions || []).join("\n");
   els.sandboxDecision.textContent = [box.priceNote, box.lastDecision].filter(Boolean).join(" ");
   els.sandboxLines.innerHTML = box.lines?.length
@@ -400,7 +416,7 @@ function renderSandbox(box) {
         })
         .join("")
     : `<tr><td colspan="5">Открытых позиций нет</td></tr>`;
-  if (box.journal) renderSandboxJournal(box.journal);
+  if (box.journal) renderSandboxJournal(box.journal, null, box.venue || "live");
   renderLogic(box.logic);
   renderDays(box.days || []);
 }
@@ -411,10 +427,10 @@ function mskClock(iso) {
   return new Date(date.getTime() + 3 * 60 * 60 * 1000).toISOString().slice(11, 19);
 }
 
-function tradeIncome(list) {
+function tradeIncome(list, venue = "live") {
   const open = {};
   const marked = [];
-  const rows = (list || []).filter((row) => row.venue === "live").slice().sort((a, b) => new Date(a.at) - new Date(b.at));
+  const rows = (list || []).filter((row) => row.venue === venue).slice().sort((a, b) => new Date(a.at) - new Date(b.at));
   for (const row of rows) {
     const lots = row.lotsExecuted || row.lots || 0;
     const perLot = lots ? Number(row.amount) / lots : 0;
@@ -503,8 +519,8 @@ function renderLogic(list) {
     : `<li>Жду первый разбор после проверки книги.</li>`;
 }
 
-function renderSandboxJournal(list, target) {
-  const live = tradeIncome(list);
+function renderSandboxJournal(list, target, venue = "live") {
+  const live = tradeIncome(list, venue);
   const html = live.length
     ? live
         .slice(0, 40)
@@ -522,7 +538,7 @@ function renderSandboxJournal(list, target) {
           </tr>`;
         })
         .join("")
-    : `<tr><td colspan="7">Заявок боевого счёта ещё нет</td></tr>`;
+    : `<tr><td colspan="7">${venue === "sandbox" ? "Заявок песочницы ещё нет" : "Заявок боевого счёта ещё нет"}</td></tr>`;
   (target || els.sandboxJournal).innerHTML = html;
 }
 
