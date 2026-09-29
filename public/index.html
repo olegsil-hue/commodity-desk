@@ -26,6 +26,7 @@
       <div class="toolbar">
         <button class="tiny on" id="tab-account" type="button">Счёт</button>
         <button class="tiny" id="tab-days" type="button">Дни</button>
+        <button class="tiny" id="tab-brain" type="button">Мозг</button>
         <label class="check"><input id="sandbox-pause" type="checkbox" /> Пауза</label>
         <button class="tiny" id="logout" type="button">Выйти</button>
       </div>
@@ -74,6 +75,14 @@
         <h2>Торговые дни</h2>
         <div id="day-list"></div>
         <article id="day-detail" hidden></article>
+      </section>
+    </main>
+    <main class="desk" id="sheet-brain" hidden>
+      <section class="panel">
+        <h2>Мозг</h2>
+        <p id="brain-rule" class="plan"></p>
+        <div id="brain-map" class="brain"></div>
+        <p id="brain-read" class="plan"></p>
       </section>
     </main>
   </div>

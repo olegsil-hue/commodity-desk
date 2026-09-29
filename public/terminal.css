@@ -59,7 +59,31 @@ input, select, button {
 input, select { width: 100%; }
 button { cursor: pointer; }
 button.primary { background: #243024; border-color: #3d5a3a; }
-button.ghost { margin-top: 8px; width: 100%; }
+.brain {
+  position: relative;
+  min-height: 560px;
+  margin-top: 12px;
+  background: #10130e;
+  border: 1px solid var(--line);
+  overflow: auto;
+}
+.brain svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.brain-node {
+  position: absolute;
+  width: 148px;
+  margin: 0;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+.brain-node.hub { border-color: var(--hedge); }
+.brain-node.on { border-color: var(--text); }
+#brain-read { margin-top: 12px; white-space: pre-wrap; }
 .sentence {
   font-size: 18px;
   line-height: 1.4;

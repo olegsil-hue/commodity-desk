@@ -46,6 +46,7 @@ function publicView(box) {
     priceNote: box?.priceNote || "",
     lastDecision: box?.lastDecision || "",
     logic: box?.logic || [],
+    brain: box?.brain || null,
     journal: rows,
     enabled: box?.enabled !== false,
     tail: process.env.TBANK_TOKEN ? String(process.env.TBANK_TOKEN).slice(-4) : "",

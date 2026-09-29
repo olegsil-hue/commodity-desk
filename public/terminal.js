@@ -336,16 +336,71 @@ document.querySelector("#logout").addEventListener("click", async () => {
 document.querySelector("#tab-account").addEventListener("click", () => {
   document.querySelector("#sheet-account").hidden = false;
   document.querySelector("#sheet-days").hidden = true;
+  document.querySelector("#sheet-brain").hidden = true;
   document.querySelector("#tab-account").classList.add("on");
   document.querySelector("#tab-days").classList.remove("on");
+  document.querySelector("#tab-brain").classList.remove("on");
 });
 
 document.querySelector("#tab-days").addEventListener("click", () => {
   document.querySelector("#sheet-account").hidden = true;
   document.querySelector("#sheet-days").hidden = false;
+  document.querySelector("#sheet-brain").hidden = true;
   document.querySelector("#tab-days").classList.add("on");
   document.querySelector("#tab-account").classList.remove("on");
+  document.querySelector("#tab-brain").classList.remove("on");
 });
+
+document.querySelector("#tab-brain").addEventListener("click", () => {
+  document.querySelector("#sheet-account").hidden = true;
+  document.querySelector("#sheet-days").hidden = true;
+  document.querySelector("#sheet-brain").hidden = false;
+  document.querySelector("#tab-brain").classList.add("on");
+  document.querySelector("#tab-account").classList.remove("on");
+  document.querySelector("#tab-days").classList.remove("on");
+});
+
+function renderBrain(graph) {
+  const map = document.querySelector("#brain-map");
+  const rule = document.querySelector("#brain-rule");
+  const reader = document.querySelector("#brain-read");
+  if (!map || !graph?.nodes?.length) return;
+  if (rule) rule.textContent = graph.rule?.text || "";
+  const order = ["sandbox", "trades", "news", "rule"];
+  const visible = [];
+  order.forEach((process, column) => {
+    const nodes = graph.nodes.filter((node) => node.process === process);
+    const hubs = nodes.filter((node) => node.hub);
+    const rest = nodes.filter((node) => !node.hub).slice(-6);
+    [...hubs, ...rest].forEach((node, row) => {
+      visible.push({ ...node, x: 16 + column * 176, y: 16 + row * 78 });
+    });
+  });
+  const ids = new Set(visible.map((node) => node.id));
+  const height = Math.max(560, ...visible.map((node) => node.y + 70));
+  map.style.height = `${height}px`;
+  const lines = (graph.links || [])
+    .filter((link) => ids.has(link.from) && ids.has(link.to))
+    .map((link) => {
+      const from = visible.find((node) => node.id === link.from);
+      const to = visible.find((node) => node.id === link.to);
+      return `<line x1="${from.x + 74}" y1="${from.y + 28}" x2="${to.x + 74}" y2="${to.y + 28}" stroke="#5c6554" stroke-width="1" />`;
+    })
+    .join("");
+  map.innerHTML = `<svg viewBox="0 0 760 ${height}" width="760" height="${height}">${lines}</svg>` + visible.map((node) => (
+    `<button type="button" class="brain-node${node.hub ? " hub" : ""}" data-id="${node.id}" style="left:${node.x}px;top:${node.y}px">${node.title}</button>`
+  )).join("");
+  map.querySelectorAll(".brain-node").forEach((button) => {
+    button.addEventListener("click", () => {
+      map.querySelectorAll(".brain-node").forEach((item) => item.classList.remove("on"));
+      button.classList.add("on");
+      const node = graph.nodes.find((item) => item.id === button.dataset.id);
+      if (reader && node) reader.textContent = node.body || "";
+    });
+  });
+  const ruleNode = graph.nodes.find((node) => node.id === "hub:rule");
+  if (reader && ruleNode && !reader.textContent) reader.textContent = ruleNode.body || "";
+}
 
 function renderDays(days) {
   const list = document.querySelector("#day-list");
@@ -417,6 +472,7 @@ function renderSandbox(box) {
         .join("")
     : `<tr><td colspan="5">Открытых позиций нет</td></tr>`;
   if (box.journal) renderSandboxJournal(box.journal, null, box.venue || "live");
+  renderBrain(box.brain);
   renderLogic(box.logic);
   renderDays(box.days || []);
 }

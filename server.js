@@ -10,6 +10,7 @@ const broker = require("./lib/broker");
 const watch = require("./lib/watch");
 const journal = require("./lib/journal");
 const sandboxRun = require("./lib/sandbox-run");
+const brain = require("./lib/brain");
 const deskChat = require("./lib/desk-chat");
 const notify = require("./lib/notify");
 
@@ -183,7 +184,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (req.method === "GET" && url.pathname === "/api/sandbox") {
       const shot = sandboxRun.peek() || (await sandboxRun.picture().catch((err) => ({ ready: false, text: err.message })));
-      send(res, 200, JSON.stringify({ ...shot, journal: journal.load() }));
+      send(res, 200, JSON.stringify({ ...shot, journal: journal.load(), brain: shot.brain || brain.current() }));
       return;
     }
     if (req.method === "POST" && url.pathname === "/api/sandbox/pause") {
