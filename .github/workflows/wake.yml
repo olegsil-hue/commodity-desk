@@ -1,0 +1,22 @@
+name: wake
+on:
+  schedule:
+    - cron: "*/15 5-20 * * *"
+  workflow_dispatch:
+permissions:
+  actions: write
+  contents: read
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: moex-wake
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24.19.0"
+      - name: Start the shift when the desk is quiet
+        run: node scripts/wake-shift.js

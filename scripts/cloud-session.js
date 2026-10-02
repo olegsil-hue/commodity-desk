@@ -10,7 +10,13 @@ try {
 const deskChat = require("../lib/desk-chat");
 const broker = require("../lib/broker");
 const notify = require("../lib/notify");
-const { step, picture } = require("../lib/sandbox-run");
+let step;
+let picture;
+try {
+  ({ step, picture } = require("../lib/sandbox-run"));
+} catch (err) {
+  fail("Смена не загрузилась", err);
+}
 
 function remembered() {
   try {
@@ -78,14 +84,28 @@ async function publish(box) {
   }
 }
 
-function sessionEnd() {
-  const hour = new Date().getUTCHours();
-  if (hour < 12) return 15 * 60;
-  if (hour < 18) return 21 * 60;
+function sessionClose() {
   return 23 * 60 + 50;
 }
 
+function sessionOpenMinutes(now = new Date()) {
+  const shifted = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  const day = shifted.getUTCDay();
+  return day === 0 || day === 6 ? 10 * 60 : 9 * 60;
+}
+
+function fail(title, err) {
+  const text = String(err && err.stack || err && err.message || err);
+  console.error(text);
+  const summary = process.env.GITHUB_STEP_SUMMARY;
+  if (summary) {
+    fs.appendFileSync(summary, `## ${title}\n\n\`\`\`\n${text.slice(0, 4000)}\n\`\`\`\n`);
+  }
+  process.exit(1);
+}
+
 async function main() {
+  console.log(new Date().toISOString(), "старт", "токен", Boolean(process.env.TBANK_TOKEN), "счёт", Boolean(process.env.TBANK_ACCOUNT_ID));
   if (!process.env.TBANK_TOKEN || !process.env.TBANK_ACCOUNT_ID) {
     throw new Error("Нет TBANK_TOKEN или TBANK_ACCOUNT_ID");
   }
@@ -94,42 +114,49 @@ async function main() {
     return;
   }
   if (process.env.SESSION_SLOT === "shift") {
-    const end = sessionEnd();
-    console.log(new Date().toISOString(), "смена GitHub до конца окна, минута мск", end);
+    const close = sessionClose();
+    const open = sessionOpenMinutes();
+    const now = mskMinutes();
+    if (now < open || now >= close) {
+      console.log(new Date().toISOString(), "биржа закрыта, смену не держу");
+      return;
+    }
+    const deadline = Date.now() + 5 * 60 * 60 * 1000;
+    console.log(new Date().toISOString(), "смена GitHub, песочница", broker.venue() === "sandbox");
     await notify.commands();
     await notify.send(broker.venue() === "sandbox"
       ? "Стол запустился в песочнице. Боевой счёт не трогаю."
-      : "Стол запустился.");
+      : "Стол запустился.").catch(() => {});
     let lastStatus = Date.now();
     try {
-      while (mskMinutes() < end) {
-        await notify.pull().catch(() => {});
-        const awake = await deskChat.localAwake();
-        let traded = false;
-        if (awake === true) {
-          console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
-        } else {
-          try {
+      while (mskMinutes() < close && Date.now() < deadline) {
+        try {
+          await notify.pull().catch(() => {});
+          const awake = await deskChat.localAwake().catch(() => "unknown");
+          let traded = false;
+          if (awake === true) {
+            console.log(new Date().toISOString(), "локальный стол жив, заявку с GitHub не ставлю");
+          } else {
             const box = await step();
             traded = /(?:Купил|Продал|Закрыл) /.test(box?.lastDecision || "");
             await publish(box);
-          } catch (err) {
-            console.log(new Date().toISOString(), "шаг не прошёл:", err.message);
           }
+          if (traded) lastStatus = Date.now();
+          else if (Date.now() - lastStatus >= 55 * 60 * 1000) {
+            await notify.send(broker.venue() === "sandbox"
+              ? "Стол работает в песочнице. Новых сделок нет. Боевой счёт не трогаю."
+              : "Стол работает. Новых сделок нет.").catch(() => {});
+            lastStatus = Date.now();
+          }
+        } catch (err) {
+          console.log(new Date().toISOString(), "шаг не прошёл:", err.message);
         }
-        if (traded) lastStatus = Date.now();
-        else if (Date.now() - lastStatus >= 55 * 60 * 1000) {
-          await notify.send(broker.venue() === "sandbox"
-            ? "Стол работает в песочнице. Новых сделок нет. Боевой счёт не трогаю."
-            : "Стол работает. Новых сделок нет.");
-          lastStatus = Date.now();
-        }
-        const left = (end - mskMinutes()) * 60 * 1000;
-        if (left <= 0) break;
+        const left = (close - mskMinutes()) * 60 * 1000;
+        if (left <= 0 || Date.now() >= deadline) break;
         await new Promise((resolve) => setTimeout(resolve, Math.min(60_000, left)));
       }
     } finally {
-      await notify.send("Стол остановился.");
+      if (mskMinutes() >= close) await notify.send("Стол остановился.").catch(() => {});
     }
     return;
   }
@@ -141,7 +168,7 @@ async function main() {
     await publish(await step());
     return;
   }
-  const end = sessionEnd();
+  const end = sessionClose();
   while (mskMinutes() < end) {
     try {
       if (await deskChat.localAwake() === true) {
@@ -159,10 +186,7 @@ async function main() {
 }
 
 if (require.main === module) {
-  main().catch((err) => {
-    console.error(err.message);
-    process.exit(1);
-  });
+  main().catch((err) => fail("Смена упала", err));
 }
 
 module.exports = { publicView };
