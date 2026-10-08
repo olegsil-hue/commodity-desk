@@ -10,6 +10,8 @@ try {
 const deskChat = require("../lib/desk-chat");
 const broker = require("../lib/broker");
 const notify = require("../lib/notify");
+const dailyLetter = require("../lib/daily-letter");
+const { dispatch } = require("./github-dispatch");
 let step;
 let picture;
 try {
@@ -115,18 +117,27 @@ async function main() {
   }
   if (process.env.SESSION_SLOT === "shift") {
     const close = sessionClose();
-    const open = sessionOpenMinutes();
-    const now = mskMinutes();
-    if (now < open || now >= close) {
-      console.log(new Date().toISOString(), "биржа закрыта, смену не держу");
+    let open = sessionOpenMinutes();
+    let now = mskMinutes();
+    if (now >= close || (now < open && open - now > 90)) {
+      console.log(new Date().toISOString(), "биржа закрыта, передаю утро");
+      const next = await dispatch("bridge.yml");
+      console.log(new Date().toISOString(), next.ok ? "утренний запуск передан" : `утренний запуск не передан: ${next.status}`);
       return;
+    }
+    if (now < open) {
+      console.log(new Date().toISOString(), "жду открытия, минут", open - now);
+      await new Promise((resolve) => setTimeout(resolve, (open - now) * 60 * 1000));
     }
     const deadline = Date.now() + 5 * 60 * 60 * 1000;
     console.log(new Date().toISOString(), "смена GitHub, песочница", broker.venue() === "sandbox");
     await notify.commands();
+    await dailyLetter.deliver(dailyLetter.previousDay(dailyLetter.moscowDay())).catch((err) => {
+      console.log(new Date().toISOString(), "вчерашнее письмо не ушло:", err.message);
+    });
     await notify.send(broker.venue() === "sandbox"
-      ? "Стол запустился в песочнице. Боевой счёт не трогаю."
-      : "Стол запустился.").catch(() => {});
+      ? "Стол запущен и работает в песочнице. Боевой счёт не трогаю."
+      : "Стол запущен и работает.");
     let lastStatus = Date.now();
     try {
       while (mskMinutes() < close && Date.now() < deadline) {
@@ -156,7 +167,17 @@ async function main() {
         await new Promise((resolve) => setTimeout(resolve, Math.min(60_000, left)));
       }
     } finally {
-      if (mskMinutes() >= close) await notify.send("Стол остановился.").catch(() => {});
+      if (mskMinutes() >= close) {
+        await dailyLetter.deliver(dailyLetter.moscowDay()).catch((err) => {
+          console.log(new Date().toISOString(), "письмо не ушло:", err.message);
+        });
+        await notify.send("Стол остановился. Завтра запустится сам.").catch(() => {});
+        const next = await dispatch("bridge.yml");
+        console.log(new Date().toISOString(), next.ok ? "утренний запуск передан" : `утренний запуск не передан: ${next.status}`);
+      } else {
+        const next = await dispatch("session.yml");
+        console.log(new Date().toISOString(), next.ok ? "следующая смена передана" : `следующая смена не передана: ${next.status}`);
+      }
     }
     return;
   }

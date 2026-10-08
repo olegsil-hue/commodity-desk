@@ -28,12 +28,9 @@ async function main() {
     console.log("смена уже идёт");
     return;
   }
-  const dispatched = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/session.yml/dispatches`, {
-    method: "POST",
-    headers: { ...headers, "Content-Type": "application/json" },
-    body: JSON.stringify({ ref: "master" }),
-  });
-  if (dispatched.status !== 204) throw new Error(`запуск смены ${dispatched.status}`);
+  const { dispatch } = require("./github-dispatch");
+  const dispatched = await dispatch("session.yml");
+  if (!dispatched.ok) throw new Error(`запуск смены ${dispatched.status}`);
   console.log("смена запущена");
 }
 

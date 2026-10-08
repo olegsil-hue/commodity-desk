@@ -1,24 +1,22 @@
-name: wake
+name: bridge
 on:
-  schedule:
-    - cron: "*/15 5-20 * * *"
   workflow_dispatch:
 permissions:
   actions: write
   contents: read
 jobs:
-  wake:
+  bridge:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 330
     concurrency:
-      group: moex-wake
-      cancel-in-progress: true
+      group: moex-bridge
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "24.19.0"
-      - name: Start the shift when the desk is quiet
+      - name: Wait for the open
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/wake-shift.js
+        run: node scripts/bridge.js
